@@ -1,6 +1,6 @@
 <?php
 
-
+require_once './includes/function.php';
 
 ?>
 <!doctype html>
@@ -33,15 +33,33 @@
                 $post_per_page = 3;
                 // $result = (2-1)*5 = 5;
                 $result = ($page - 1) * $post_per_page;
-                $data = "SELECT * from articles LIMIT $result,$post_per_page";
+
+                //code for search
+                if(isset($_GET['search'])){
+                    $key = $_GET['search'];
+                    $data = "SELECT * from articles WHERE title LIKE '%$key%' ORDER BY id DESC LIMIT $result,$post_per_page";
+                }
+                else{
+                    $data = "SELECT * from articles ORDER BY id DESC LIMIT $result,$post_per_page";
+                }
                 $query = mysqli_query($connection, $data);
                 while ($row = mysqli_fetch_assoc($query)) {
+                    $category_id = $row['category_id'];
                 ?>
                     <div class="row">
                         <div class="card mb-3">
                             <div class="row g-0">
                                 <div class="col-md-4">
-                                    <img src="images/events/event-3.jpg" class="img-fluid rounded-start" alt="...">
+                                    <span class="badge badge-pill bg-dark text-white pr-2 pl-2 pt-2 pb-2 ml-0"><?php echo getCategory($connection,$category_id);?></span>
+                                    <?php 
+                                    
+                                    $article_img = getimages($connection,$row['id']);
+                                    foreach($article_img as $img){
+                                        ?>
+                                        <img src="images/<?=$img['image'];?>" class="img-fluid rounded-start" alt="...">
+                                    <?php
+                                    }
+                                    ?>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="card-body">
@@ -92,20 +110,33 @@
         $total_articles = mysqli_num_rows($r);
         $total_pages = ceil($total_articles/$post_per_page);
         // echo $total_pages;
+        if($page>1){
+            $switch="";
+        }else{
+            $switch="disabled";
+        }
+        if($page<$total_pages){
+            $nswitch="";
+        }else{
+            $nswitch="disabled";
+        }
 
     
     ?>
     <nav aria-label="Page navigation example">
         <ul class="pagination text-center justify-content-center">
+            <li class="page-item <?php echo $switch;?>"><a class="page-link" href="?page=<?php echo $page-1;?>">Previous</a></li>
             <?php 
-            for($page = 1; $page<$total_pages; $page++){
+            for($opage = 1; $opage<$total_pages; $opage++){
                 ?>
-                    <li class="page-item"><a class="page-link" href="?page=<?php echo $page?>"><?=$page?></a></li>
+                    <li class="page-item"><a class="page-link" href="?page=<?php echo $opage?>"><?=$opage?></a></li>
                <?php
             }
             
             
             ?>
+            <li class="page-item <?php echo $nswitch;?>"><a class="page-link" href="?page=<?php echo $page+1;?>">Next</a></li>
+
         </ul>
     </nav>
 

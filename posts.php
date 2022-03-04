@@ -13,27 +13,89 @@
 </head>
 
 <body>
-  <?php require_once 'includes/nav.php'; ?>
+    <?php include_once './includes/function.php'; ?>
+    <?php require_once 'includes/nav.php'; ?>
 
-  <?php
+    <?php
     require_once './includes/db.php';
 
     $single_id = $_GET['id'];
     $data = "SELECT * from articles where id = '{$single_id}'";
     $query = mysqli_query($connection, $data);
     $row = mysqli_fetch_assoc($query);
+    $category_id = $row['category_id'];
+    // echo $category_id;
 
-?>
+    ?>
+    <?php
+
+    $article_img = getimages($connection, $row['id']);
+
+    ?>
+
     <div class="container my-5">
         <div class="row">
-            <div class="card mb-3">
-                <img src="images/about/about-us.jpg" class="card-img-top" style="height: 400px;">
+            <div class="card mb-3 col-md-8">
+                <div class="card-title my-3">
+                    <span class="badge badge-pill mb-3 bg-dark text-white pr-2 pl-2 pt-2 pb-2 ml-0"><?php echo getCategory($connection, $category_id); ?></span>
+                    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                            <?php
+                            foreach ($article_img as $img) {
+                            ?>
+                                <div class="carousel-item active">
+                                    <img class="d-block w-100" src="./images/<?= $img['image'] ?>" alt="First slide">
+                                </div>
+                            <?php
+                            }
+                            ?>
+
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title"><?php echo $row['title'];?></h5>
-                    <p class="card-text"><?php echo $row['content']?></p>
-                    <p class="card-text"><small class="text-muted"><?php echo $row['created_at'];?></small></p>
+                    <h5 class="card-title"><?php echo $row['title']; ?></h5>
+                    <p class="card-text"><?php echo $row['content'] ?></p>
+                    <p class="card-text"><small class="text-muted"><?php echo $row['created_at']; ?></small></p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Related Posts</h2>
+        <div class="row">
+            <?php
+                $query = "SELECT * from articles where category_id ={$row['category_id']} ORDER BY id DESC";
+                $run = mysqli_query($connection, $query);
+                while ($res = mysqli_fetch_assoc($run)) {
+                    if($res['id']==$row['id']){
+                        continue;
+                    }
+                    ?>
+
+                <div class="col-md-8">
+                    <div class="card mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="images/computer.jpg" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <a href="posts.php?id=<?=$row['id']?>" class="card-title"><?php echo $res['title']; ?></a>
+                                    <p class="card-text"><?php echo $res['content']; ?></p>
+                                    <p class="card-text"><small class="text-muted"><?=date('F js, Y',strtotime($res['created_at'])); ?></small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+        <?php
+                }
+
+
+        ?>
         </div>
     </div>
 
