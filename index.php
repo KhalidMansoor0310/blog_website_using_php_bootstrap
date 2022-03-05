@@ -50,6 +50,7 @@ require_once './includes/function.php';
                         <div class="card mb-3">
                             <div class="row g-0">
                                 <div class="col-md-4">
+<<<<<<< HEAD
                                     <span class="badge badge-pill bg-dark text-white pr-2 pl-2 pt-2 pb-2 ml-0"><?php echo getCategory($connection,$category_id);?></span>
                                     <?php 
                                     
@@ -60,6 +61,9 @@ require_once './includes/function.php';
                                     <?php
                                     }
                                     ?>
+=======
+                                    <img src="images/event-3.jpg" class="img-fluid rounded-start" alt="...">
+>>>>>>> 0c616a766389ed9fdf109fbff9359f4cef030676
                                 </div>
                                 <div class="col-md-8">
                                     <div class="card-body">
